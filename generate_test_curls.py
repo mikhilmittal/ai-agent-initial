@@ -4,7 +4,7 @@ import re
 import os
 
 # Set your OpenAI API key
-#client = OpenAI(api_key="abcd")
+client = OpenAI(api_key="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")
 
 def generate_test_curls(input_curl):
     prompt = f"""
