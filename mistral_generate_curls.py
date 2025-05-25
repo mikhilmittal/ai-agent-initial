@@ -1,15 +1,17 @@
+from openai import OpenAI
 import subprocess
 import re
 import os
-import requests
-from huggingface_hub import InferenceClient
-import os
 
 os.environ['PYDEVD_WARN_EVALUATION_TIMEOUT'] = '50000'  # 5 seconds
+# Set your OpenAI API key
+#client = OpenAI(api_key="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")
 
-# Then start your debugger (e.g., PyCharm/VS Code debug session)
+client = OpenAI(
+  base_url="https://openrouter.ai/api/v1",
+  api_key="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",
+)
 
-HF_API_TOKEN = "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"  # Get it from https://huggingface.co/settings/tokens
 
 def generate_test_curls(input_curl):
     prompt = f"""
@@ -20,21 +22,22 @@ Given this base cURL command:
 Generate 10 variations that test edge cases, missing fields, invalid types, etc.
 Return each variation as a full cURL command, one per line.
 """
-    client = InferenceClient(
-    provider="hf-inference",
-    api_key=HF_API_TOKEN,
-    timeout=1000)
 
     completion = client.chat.completions.create(
-    model="Qwen/Qwen3-235B-A22B",
+    model="mistralai/devstral-small:free",
     messages=[
-        {
-            "role": "user",
-            "content": prompt
-        }
-    ],)
+    {
+      "role": "user",
+      "content": prompt
+    }
+    ]
+    )
 
-    print(completion.choices[0].message)
+    #print(completion.choices[0].message.content)
+
+    content = completion.choices[0].message.content
+    curl_commands = re.findall(r'curl .*', content)
+    return curl_commands
 
 def run_curl_and_get_response(curl_cmd):
     try:
@@ -46,7 +49,7 @@ def run_curl_and_get_response(curl_cmd):
 def main():
     input_curl = input("Enter a cURL command: ").strip()
 
-    print("Generating test cases using Hugging Face...")
+    print("Generating test cases using OpenAI...")
     test_curls = generate_test_curls(input_curl)
 
     print(f"\nGenerated {len(test_curls)} test cases. Executing them...\n")
@@ -67,7 +70,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-#Nmiikthailli@2912
