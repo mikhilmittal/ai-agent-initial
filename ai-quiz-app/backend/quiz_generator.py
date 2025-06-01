@@ -4,7 +4,7 @@ from openai import OpenAI
 
 client = OpenAI(
     base_url="https://openrouter.ai/api/v1",
-    api_key="YOUR_API_KEY"
+    api_key="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"
 )
 
 def generate_question(topic):
